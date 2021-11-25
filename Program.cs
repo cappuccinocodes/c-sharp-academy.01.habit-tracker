@@ -35,6 +35,7 @@ namespace HabitTracker
                 Console.WriteLine("\nType 0 to Close Application.");
                 Console.WriteLine("Type 1 to View All Records.");
                 Console.WriteLine("Type 2 to Insert Record.");
+                Console.WriteLine("Type 3 to Delete Record.");
 
 
                 string commandInput = Console.ReadLine();
@@ -58,8 +59,11 @@ namespace HabitTracker
                     case 2:
                         Insert();
                         break;
+                    case 3:
+                        Delete();
+                        break;
                     default:
-                        Console.WriteLine("\nInvalid Command. Please type a number from 0 to 1.\n");
+                        Console.WriteLine("\nInvalid Command. Please type a number from 0 to 3.\n");
                         break;
                 }
             }
@@ -142,6 +146,54 @@ namespace HabitTracker
             {
                 Console.WriteLine(e.Message);
                 throw; 
+            }
+        }
+
+        internal static void Delete()
+        {
+
+            GetAllRecords();
+
+            Console.WriteLine("\n\nPlease type the Id of the record you want to delete or type 0 to go back to Main Menu\n\n");
+
+            string recordId = Console.ReadLine();
+
+            if (recordId == "0") GetUserInput();
+
+            while (!Int32.TryParse(recordId, out _) || string.IsNullOrEmpty(recordId))
+            {
+                Console.WriteLine("\n\nInvalid Id. Try again.\n\n");
+                recordId = Console.ReadLine();
+            }
+
+            var Id = Int32.Parse(recordId);
+
+            if (Id == 0) GetUserInput();
+
+            try
+            {
+                using (var connection = new SqliteConnection(connectionString))
+                {
+                    connection.Open();
+                    var tableCmd = connection.CreateCommand();
+                    tableCmd.CommandText = $"DELETE from drinking_water WHERE Id = '{Id}'";
+                    int rowCount = tableCmd.ExecuteNonQuery();
+
+                    if (rowCount == 0)
+                    {
+                        Console.WriteLine($"\n\nRecord with Id {Id} doesn't exist. \n\n");
+                        Delete();
+                    }
+                }
+
+                Console.WriteLine($"\n\nRecord with Id {Id} was deleted. \n\n");
+
+                GetUserInput();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
             }
         }
 
