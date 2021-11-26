@@ -67,7 +67,7 @@ namespace HabitTracker
                         Update();
                         break;
                     default:
-                        Console.WriteLine("\nInvalid Command. Please type a number from 0 to 3.\n");
+                        Console.WriteLine("\nInvalid Command. Please type a number from 0 to 4.\n");
                         break;
                 }
             }
@@ -107,7 +107,7 @@ namespace HabitTracker
                         {
                             Id = reader.GetInt32(0),
                             Date = DateTime.ParseExact(reader.GetString(1), "dd-MM-yy", new CultureInfo("en-US")),
-                            Quantity = reader.GetInt32(2)
+                            Quantity = ((double)reader.GetInt32(2) / 10)
                         }); ;
                     }
                 }
@@ -120,7 +120,7 @@ namespace HabitTracker
 
                 foreach (DrinkingWater dw in tableData)
                 {
-                    Console.WriteLine($"{dw.Id} - {dw.Date} - {dw.Quantity}");
+                    Console.WriteLine($"{dw.Id} - {dw.Date.ToString("dd-MMM-yyyy")} - {dw.Quantity}l");
                 }
 
             }
@@ -286,7 +286,7 @@ namespace HabitTracker
                 quantityInput = Console.ReadLine();
             }
 
-            int finalInput = Convert.ToInt32(Convert.ToDouble(quantityInput));
+            int finalInput = Convert.ToInt32(Convert.ToDouble(quantityInput) * 10);
 
             return finalInput;
         }
